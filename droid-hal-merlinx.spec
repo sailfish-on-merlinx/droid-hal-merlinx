@@ -16,4 +16,11 @@
 /sdcard\
 /system_ext\
 %{nil}
+# Android 16 init.rc starts odsign in post-fs-data and waits for
+# odsign.key.done; odsign cannot run on Sailfish OS (needs the statsd APEX and
+# is only for ART), so init would stall before starting the HALs.
+%define custom_install_cmds \
+sed -i -e '/^ *start odsign$/s/start/# Removed for Sailfish OS: start/' -e '/^ *wait_for_prop odsign.key.done 1$/s/wait_for_prop/# Removed for Sailfish OS: wait_for_prop/' $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/system/etc/init/hw/init.rc \
+test $(grep -cE "^ *# Removed for Sailfish OS: (start odsign|wait_for_prop odsign.key.done 1)$" $RPM_BUILD_ROOT%{_libexecdir}/droid-hybris/system/etc/init/hw/init.rc) -eq 2 || exit 1 \
+%{nil}
 %include rpm/dhd/droid-hal-device.inc
