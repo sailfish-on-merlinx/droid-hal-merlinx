@@ -5,7 +5,9 @@
 %define device_pretty Redmi Note 9
 %define installable_zip 1
 %define droid_target_aarch64 1
-%define makefstab_skip_entries /system /vendor /product
+# Logical partitions in super: mapped by dmsetup.service and mounted by
+# custom units in droid-config (HADK-hot: dynamic partitions)
+%define makefstab_skip_entries /system /system_ext /vendor /product
 %define straggler_files \
 /adb_keys\
 /bugreports\
